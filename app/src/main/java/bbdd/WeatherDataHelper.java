@@ -1,45 +1,54 @@
 package bbdd;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import fragment.Weather;
 import weatherData.WeatherModel;
 
-/**
- * Created by g on 18/02/2016.
- */
 public class WeatherDataHelper extends SQLiteOpenHelper {
 
-    private final static String WEATHER_BBDD = "weather_bbdd.db";
-    public static final int DATABASE_VERSION = 1;
-    public static final String WEATHER_TABLE_NAME = "weather_data";
-
-    public static final String TABLE_WEATHER_DATA=
-            "CREATE TABLE "+WEATHER_TABLE_NAME+"(" +
-            "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "ciudad TEXT," +
-            "icon TEXT," +
-            "descripcion TEXT," +
-            "presion DECIMAL," +
-            "temp DECIMAL," +
-            "humedad DECIMAL," +
-            "fechHora DATETIME"+
-            ");";
-
     public WeatherDataHelper(Context context){
-        super(context,WEATHER_BBDD,null,DATABASE_VERSION);
+        super(context,QuoteDataSource.WEATHER_BBDD,null,QuoteDataSource.DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(TABLE_WEATHER_DATA);
+        db.execSQL(QuoteDataSource.TABLE_WEATHER_DATA);
     }
 
     public void insertWeatherDataHelper(WeatherModel weatherModel){
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("INSERT INTO "+WEATHER_TABLE_NAME+" VALUES ("+weatherModel.getWeather()+", "+weatherModel.getWeathername()+", "+weatherModel.getPressure()+", "+weatherModel.getTemp()+", "+weatherModel.getHumidity()+")");
+
+        db.execSQL("INSERT INTO "+QuoteDataSource.WEATHER_TABLE_NAME+
+                " VALUES ("+weatherModel.getWeather()+", "+weatherModel.getWeathername()+
+                ", "+weatherModel.getPressure()+", "+weatherModel.getTemp()+
+                ", "+weatherModel.getHumidity()+")");
+
         db.close();
+    }
+
+    public WeatherModel selectWeatherDataHelper(){
+        SQLiteDatabase db = getWritableDatabase();
+
+        WeatherModel weatherModel = null;
+
+        Cursor cursor = db.rawQuery("SELECT codigo,nombre FROM weather_data", null);
+        if (cursor.moveToFirst()) {
+            //Recorremos el cursor hasta que no haya más registros
+            do {
+                weatherModel = new WeatherModel();
+                weatherModel.setWeather(cursor.getString(2));
+                weatherModel.setWeathername(cursor.getString(3));
+                weatherModel.setPressure(cursor.getFloat(4));
+                weatherModel.setTemp(cursor.getFloat(5));
+                weatherModel.setHumidity(cursor.getFloat(6));
+            } while(cursor.moveToNext());
+        }
+
+        return weatherModel;
     }
 
     @Override

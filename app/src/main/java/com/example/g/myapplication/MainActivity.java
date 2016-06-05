@@ -1,31 +1,26 @@
 package com.example.g.myapplication;
 
 import android.app.AlertDialog;
-import android.app.Application;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.text.InputType;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import org.json.JSONObject;
 
-import bbdd.WeatherDataHelper;
+import bbdd.QuoteDataSource;
 import conectionWeatherData.RemoteFetch;
+import conectionWeatherData.WeatherConnectionApi;
 import fragment.TempHumidity;
 import fragment.Weather;
 import sharePreferences.Preferences;
-import weatherData.WeatherData;
 import weatherData.WeatherModel;
 
 public class MainActivity extends FragmentActivity {
@@ -33,7 +28,12 @@ public class MainActivity extends FragmentActivity {
     private FragmentTabHost TabHost;
     private Handler handler = new Handler();
     private WeatherModel weatherModel;
-    private WeatherDataHelper weatherDataHelper;
+    private SQLiteDatabase database;
+    QuoteDataSource quoteDataSource = new QuoteDataSource(this);
+
+    public MainActivity(WeatherModel weatherModel) {
+        this.weatherModel = weatherModel;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class MainActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_main);
 
-        weatherDataHelper = new WeatherDataHelper(this);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,10 +51,7 @@ public class MainActivity extends FragmentActivity {
                 showInputDialog();
             }
         });
-        weatherModel.setPressure((float)11.1);
-        weatherModel.setHumidity((float)22.2);
-        weatherModel.setTemp((float)22.2);
-        weatherDataHelper.insertWeatherDataHelper(weatherModel);
+
         TabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         TabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
@@ -64,6 +61,9 @@ public class MainActivity extends FragmentActivity {
         TabHost.addTab(
                 TabHost.newTabSpec("tab2").setIndicator("Temp y humedad", null),
                 TempHumidity.class, null);
+
+        WeatherConnectionApi weatherConnectionApi = new WeatherConnectionApi();
+        weatherConnectionApi.execute("hola");
 
     }
 
@@ -116,15 +116,12 @@ public class MainActivity extends FragmentActivity {
 
     public final void getValues(JSONObject jsonObject){
         try{
-
-            JSONObject main = jsonObject.getJSONObject("main");
-            weatherModel.setHumidity(Float.parseFloat(main.getString("humidity")));
-            weatherModel.setPressure(Float.parseFloat(main.getString("pressure")));
-            weatherModel.setTemp(Float.parseFloat(main.getString("temp")));
-            JSONObject details = jsonObject.getJSONArray("weather").getJSONObject(0);
-            weatherModel.setWeather(details.getInt("id")+ "," + jsonObject.getJSONObject("sys").getLong("sunrise") * 1000 + "," + jsonObject.getJSONObject("sys").getLong("sunset") * 1000);
-            weatherModel.setWeathername(details.getString("description"));
-            weatherDataHelper.insertWeatherDataHelper(weatherModel);
+            WeatherModel weather = QuoteDataSource.getWeatherDataHelper().selectWeatherDataHelper();
+            weatherModel.setHumidity(weather.getHumidity());
+            weatherModel.setPressure(weather.getPressure());
+            weatherModel.setTemp(weather.getTemp());
+            /*weatherModel.setWeather(details.getInt("id")+ "," + jsonObject.getJSONObject("sys").getLong("sunrise") * 1000 + "," + jsonObject.getJSONObject("sys").getLong("sunset") * 1000);
+            weatherModel.setWeathername(details.getString("description"));*/
         }catch (Exception e){
 
         }

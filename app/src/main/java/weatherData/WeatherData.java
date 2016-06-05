@@ -1,18 +1,21 @@
 package weatherData;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import org.json.JSONObject;
 import java.util.ArrayList;
 
+import bbdd.QuoteDataSource;
 import bbdd.WeatherDataHelper;
+import conectionWeatherData.WeatherConnectionApi;
 import fragment.Weather;
 
 public class WeatherData implements Subjet {
 
     private ArrayList observers;
     private WeatherModel weatherModel;
-    private WeatherDataHelper weatherDataHelper;
+
 
     public WeatherData() {
         observers = new ArrayList();
@@ -46,6 +49,11 @@ public class WeatherData implements Subjet {
         this.weatherModel.setHumidity(weatherModel.getHumidity());
         measurementChanged();
 
+    }
+
+    private void obtainData(){
+        WeatherConnectionApi weatherConnectionApi = new WeatherConnectionApi();
+        weatherConnectionApi.execute("hola");;
     }
 
     public void measurementChanged(){
