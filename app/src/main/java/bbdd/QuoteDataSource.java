@@ -14,7 +14,6 @@ public class QuoteDataSource {
     public static final String TABLE_WEATHER_DATA=
             "CREATE TABLE "+WEATHER_TABLE_NAME+"(" +
                     "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "ciudad TEXT," +
                     "icon TEXT," +
                     "descripcion TEXT," +
                     "presion DECIMAL," +

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import fragment.Weather;
 import weatherData.WeatherModel;
@@ -21,7 +22,7 @@ public class WeatherDataHelper extends SQLiteOpenHelper {
 
     public void insertWeatherDataHelper(WeatherModel weatherModel){
         SQLiteDatabase db = getWritableDatabase();
-
+        Log.d("prueba",weatherModel.toString());
         db.execSQL("INSERT INTO "+QuoteDataSource.WEATHER_TABLE_NAME+
                 " VALUES ("+weatherModel.getWeather()+", "+weatherModel.getWeathername()+
                 ", "+weatherModel.getPressure()+", "+weatherModel.getTemp()+

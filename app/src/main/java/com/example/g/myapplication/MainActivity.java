@@ -29,11 +29,9 @@ public class MainActivity extends FragmentActivity {
     private Handler handler = new Handler();
     private WeatherModel weatherModel;
     private SQLiteDatabase database;
-    QuoteDataSource quoteDataSource = new QuoteDataSource(this);
+    private QuoteDataSource quoteDataSource;
+    private WeatherConnectionApi weatherConnectionApi;
 
-    public MainActivity(WeatherModel weatherModel) {
-        this.weatherModel = weatherModel;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +50,8 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+        quoteDataSource = new QuoteDataSource(this);
+
         TabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         TabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
@@ -62,8 +62,8 @@ public class MainActivity extends FragmentActivity {
                 TabHost.newTabSpec("tab2").setIndicator("Temp y humedad", null),
                 TempHumidity.class, null);
 
-        WeatherConnectionApi weatherConnectionApi = new WeatherConnectionApi();
-        weatherConnectionApi.execute("hola");
+        weatherConnectionApi = new WeatherConnectionApi(MainActivity.this);
+        weatherConnectionApi.execute();
 
     }
 
@@ -77,8 +77,6 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 changeCity(input.getText().toString());
-                updateWeatherData(input.getText().toString());
-
             }
         });
         builder.show();
@@ -90,43 +88,6 @@ public class MainActivity extends FragmentActivity {
     }
 
 
-    public void updateWeatherData(final String city){
-        new Thread(){
-            public void run(){
-                final JSONObject json = RemoteFetch.getJSON(city);
-                if(json == null){
-                    handler.post(new Runnable() {
-                        public void run() {
-                            Toast.makeText(getApplication(),
-                                    getApplication().getString(R.string.place_not_found),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    });
-                } else {
-                    handler.post(new Runnable() {
-                        public void run() {
-                            getValues(json);
-
-                        }
-                    });
-                }
-            }
-        }.start();
-    }
-
-    public final void getValues(JSONObject jsonObject){
-        try{
-            WeatherModel weather = QuoteDataSource.getWeatherDataHelper().selectWeatherDataHelper();
-            weatherModel.setHumidity(weather.getHumidity());
-            weatherModel.setPressure(weather.getPressure());
-            weatherModel.setTemp(weather.getTemp());
-            /*weatherModel.setWeather(details.getInt("id")+ "," + jsonObject.getJSONObject("sys").getLong("sunrise") * 1000 + "," + jsonObject.getJSONObject("sys").getLong("sunset") * 1000);
-            weatherModel.setWeathername(details.getString("description"));*/
-        }catch (Exception e){
-
-        }
-
-    }
 
 
 }

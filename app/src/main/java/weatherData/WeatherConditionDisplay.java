@@ -1,5 +1,8 @@
 package weatherData;
 
+import bbdd.QuoteDataSource;
+import fragment.Weather;
+
 /**
  * Created by g on 09/02/2016.
  */

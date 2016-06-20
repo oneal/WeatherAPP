@@ -39,22 +39,16 @@ public class WeatherData implements Subjet {
     public void notifyObserver() {
         for(int i = 0; i<observers.size(); i++){
             Observer observer = (Observer)observers.get(i);
+            setMeasurements();
             observer.update(this.weatherModel);
         }
     }
 
     public void setMeasurements(){
-        this.weatherModel.setTemp(weatherModel.getTemp());
-        this.weatherModel.setPressure(weatherModel.getPressure());
-        this.weatherModel.setHumidity(weatherModel.getHumidity());
+        this.weatherModel = QuoteDataSource.getWeatherDataHelper().selectWeatherDataHelper();
         measurementChanged();
-
     }
 
-    private void obtainData(){
-        WeatherConnectionApi weatherConnectionApi = new WeatherConnectionApi();
-        weatherConnectionApi.execute("hola");;
-    }
 
     public void measurementChanged(){
         notifyObserver();
