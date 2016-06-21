@@ -22,10 +22,10 @@ public class WeatherDataHelper extends SQLiteOpenHelper {
 
     public void insertWeatherDataHelper(WeatherModel weatherModel){
         SQLiteDatabase db = getWritableDatabase();
-        Log.d("prueba",weatherModel.toString());
+        Log.d("prueba", weatherModel.toString());
         db.execSQL("INSERT INTO "+QuoteDataSource.WEATHER_TABLE_NAME+
-                " VALUES ("+weatherModel.getWeather()+", "+weatherModel.getWeathername()+
-                ", "+weatherModel.getPressure()+", "+weatherModel.getTemp()+
+                " VALUES ('"+weatherModel.getWeather()+"', '"+weatherModel.getWeathername()+
+                "', "+weatherModel.getPressure()+", "+weatherModel.getTemp()+
                 ", "+weatherModel.getHumidity()+")");
 
         db.close();

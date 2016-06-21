@@ -55,8 +55,6 @@ public class WeatherConnectionApi extends AsyncTask {
                 json.append(tmp).append("\n");
             reader.close();
 
-
-
             data = new JSONObject(json.toString());
             convertDataWeatherModel(data);
 
@@ -77,8 +75,8 @@ public class WeatherConnectionApi extends AsyncTask {
             JSONObject main = json.getJSONObject("main");
             weatherModel.setHumidity(Float.parseFloat(main.getString("humidity")));
             weatherModel.setPressure(Float.parseFloat(main.getString("pressure")));
-            weatherModel.setTemp(Float.parseFloat(String.format("%.2f", main.getDouble("temp"))));
-
+            weatherModel.setTemp(Float.parseFloat(main.getDouble("temp")+""));
+            weatherModel.setWeathername(details.getString("description"));
             setWeatherIcon(details.getInt("id"),
                     json.getJSONObject("sys").getLong("sunrise") * 1000,
                     json.getJSONObject("sys").getLong("sunset") * 1000);

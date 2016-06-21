@@ -18,8 +18,7 @@ public class QuoteDataSource {
                     "descripcion TEXT," +
                     "presion DECIMAL," +
                     "temp DECIMAL," +
-                    "humedad DECIMAL," +
-                    "fechHora DATETIME"+
+                    "humedad DECIMAL" +
                     ");";
     private static WeatherDataHelper weatherDataHelper;
     private static SQLiteDatabase sqLiteDatabase;
