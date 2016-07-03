@@ -2,6 +2,7 @@ package weatherData;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.json.JSONObject;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class WeatherData implements Subjet {
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);
+        setMeasurements();
     }
 
     @Override
@@ -39,14 +41,14 @@ public class WeatherData implements Subjet {
     public void notifyObserver() {
         for(int i = 0; i<observers.size(); i++){
             Observer observer = (Observer)observers.get(i);
-            setMeasurements();
             observer.update(this.weatherModel);
         }
     }
 
     public void setMeasurements(){
-        this.weatherModel = QuoteDataSource.getWeatherDataHelper().selectWeatherDataHelper();
-        measurementChanged();
+            this.weatherModel = QuoteDataSource.getWeatherDataHelper().selectWeatherDataHelper();
+            measurementChanged();
+
     }
 
 

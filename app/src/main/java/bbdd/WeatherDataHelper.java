@@ -22,9 +22,11 @@ public class WeatherDataHelper extends SQLiteOpenHelper {
 
     public void insertWeatherDataHelper(WeatherModel weatherModel){
         SQLiteDatabase db = getWritableDatabase();
-        Log.d("prueba", weatherModel.toString());
+
+        Log.d("hola",weatherModel.toString());
+
         db.execSQL("INSERT INTO "+QuoteDataSource.WEATHER_TABLE_NAME+
-                " VALUES ('"+weatherModel.getWeather()+"', '"+weatherModel.getWeathername()+
+                " VALUES (NULL,'"+weatherModel.getWeather()+"', '"+weatherModel.getWeathername()+
                 "', "+weatherModel.getPressure()+", "+weatherModel.getTemp()+
                 ", "+weatherModel.getHumidity()+")");
 
@@ -36,16 +38,16 @@ public class WeatherDataHelper extends SQLiteOpenHelper {
 
         WeatherModel weatherModel = null;
 
-        Cursor cursor = db.rawQuery("SELECT codigo,nombre FROM weather_data", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + QuoteDataSource.WEATHER_TABLE_NAME + " WHERE id = (SELECT max(id) FROM " + QuoteDataSource.WEATHER_TABLE_NAME +")", null);
         if (cursor.moveToFirst()) {
             //Recorremos el cursor hasta que no haya más registros
             do {
                 weatherModel = new WeatherModel();
-                weatherModel.setWeather(cursor.getString(2));
-                weatherModel.setWeathername(cursor.getString(3));
-                weatherModel.setPressure(cursor.getFloat(4));
-                weatherModel.setTemp(cursor.getFloat(5));
-                weatherModel.setHumidity(cursor.getFloat(6));
+                weatherModel.setWeather(cursor.getString(1));
+                weatherModel.setWeathername(cursor.getString(2));
+                weatherModel.setPressure(cursor.getFloat(3));
+                weatherModel.setTemp(cursor.getFloat(4));
+                weatherModel.setHumidity(cursor.getFloat(5));
             } while(cursor.moveToNext());
         }
 

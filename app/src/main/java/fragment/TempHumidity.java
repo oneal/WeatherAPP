@@ -50,7 +50,6 @@ public class TempHumidity extends Fragment implements DisplayView {
 
     @Override
     public void renderView() {
-
         temp.setText((int)(currentConditionDisplay.displayTemp()-273.15)+"ºC");
         humidity.setText((int)currentConditionDisplay.displayHumidity()+"%");
         pressure.setText(currentConditionDisplay.displayPressure()+" hPa");

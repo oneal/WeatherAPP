@@ -1,11 +1,14 @@
 package com.example.g.myapplication;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.text.InputType;
@@ -25,45 +28,43 @@ import weatherData.WeatherModel;
 
 public class MainActivity extends FragmentActivity {
 
-    private FragmentTabHost TabHost;
-    private Handler handler = new Handler();
-    private WeatherModel weatherModel;
-    private SQLiteDatabase database;
-    private QuoteDataSource quoteDataSource;
-    private WeatherConnectionApi weatherConnectionApi;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
                 showInputDialog();
             }
         });
 
-        quoteDataSource = new QuoteDataSource(this);
 
-        TabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
-        TabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
 
-        /*TabHost.addTab(
-                TabHost.newTabSpec("tab1").setIndicator("Tiempo", null),
-                Weather.class, null);*/
-        TabHost.addTab(
-                TabHost.newTabSpec("tab2").setIndicator("Temp y humedad", null),
+
+        FragmentTabHost tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        tabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
+
+        tabHost.addTab(
+                tabHost.newTabSpec("tab1").setIndicator("Tiempo", null),
+                Weather.class, null);
+        tabHost.addTab(
+                tabHost.newTabSpec("tab2").setIndicator("Temp y humedad", null),
                 TempHumidity.class, null);
 
-        weatherConnectionApi = new WeatherConnectionApi(MainActivity.this);
-        weatherConnectionApi.execute();
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        QuoteDataSource quoteDataSource = new QuoteDataSource(this);
+        startService(new Intent(MainActivity.this, WeatherService.class));
 
     }
 

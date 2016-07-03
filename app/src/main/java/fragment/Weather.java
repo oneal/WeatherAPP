@@ -56,8 +56,7 @@ public class Weather extends Fragment implements DisplayView {
 
     @Override
     public void renderView() {
-        String[] weather = weatherConditionDisplay.displayWeather().split(",");
-        setWeatherIcon(Integer.parseInt(weather[0]), Long.parseLong(weather[1]), Long.parseLong(weather[2]));
+        weather.setText(weatherConditionDisplay.displayWeather());
         weatherName.setText(weatherConditionDisplay.displayWeatherName() + "");
     }
 
@@ -89,6 +88,6 @@ public class Weather extends Fragment implements DisplayView {
                     break;
             }
         }
-        weather.setText(icon);
+
     }
 }

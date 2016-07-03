@@ -2,7 +2,7 @@
     <string name="app_name">My Application</string>
     <string name="action_settings">Settings</string>
     <string name="open_weather_maps_app_id">44db6a862fba0b067b1930da0d769e98</string>
-    <string name="place_not_found" id ="W">Lugar no encontrado</string>
+    <string name="place_not_found" id="W">Lugar no encontrado</string>
     <string name="weather_sunny">&#xf00d;</string>
     <string name="weather_clear_night">&#xf02e;</string>
     <string name="weather_foggy">&#xf014;</string>
@@ -11,4 +11,6 @@
     <string name="weather_snowy">&#xf01b;</string>
     <string name="weather_thunder">&#xf01e;</string>
     <string name="weather_drizzle">&#xf01c;</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="section_format">Hello World from section: %1$d</string>
 </resources>

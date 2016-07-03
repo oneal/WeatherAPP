@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.g.myapplication.MainActivity;
 import com.example.g.myapplication.R;
 
 import org.json.JSONException;
@@ -35,6 +36,8 @@ public class WeatherConnectionApi extends AsyncTask {
     protected Object doInBackground(Object[] params) {
         cityacum = "baeza";
         openWeatherMapApi = "http://api.openweathermap.org/data/2.5/weather?q="+cityacum+"&appid=619e16aa1572618094ce0e897e987d53";
+
+
         URL url = null;
         JSONObject data = null;
         StringBuffer json = null;
@@ -58,11 +61,16 @@ public class WeatherConnectionApi extends AsyncTask {
             data = new JSONObject(json.toString());
             convertDataWeatherModel(data);
 
+
             QuoteDataSource.getWeatherDataHelper().insertWeatherDataHelper(weatherModel);
+
+            /*Thread.sleep(3600000);*/
 
         } catch (JSONException | IOException e) {
             Log.d("error22", e.getMessage());
-        }
+        }/* catch (InterruptedException e) {
+            e.printStackTrace();
+        }*/
 
         return null;
     }
