@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.g.myapplication.MainActivity;
 import com.example.g.myapplication.R;
 
 import org.json.JSONException;
@@ -15,17 +14,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
 import java.util.Date;
 
-import bbdd.QuoteDataSource;
-import fragment.Weather;
 import weatherData.WeatherModel;
 
-public class WeatherConnectionApi extends AsyncTask {
+public class WeatherConnectionApi extends AsyncTask<WeatherModel, Void, WeatherModel> {
     private static String cityacum = "";
     private static String openWeatherMapApi;
-    private static WeatherModel weatherModel = new WeatherModel();
+    private  WeatherModel weatherModel = new WeatherModel();
     private Context context;
 
     public WeatherConnectionApi(Context context){
@@ -33,7 +29,7 @@ public class WeatherConnectionApi extends AsyncTask {
     }
 
     @Override
-    protected Object doInBackground(Object[] params) {
+    protected WeatherModel doInBackground(WeatherModel... params) {
         cityacum = "baeza";
         openWeatherMapApi = "http://api.openweathermap.org/data/2.5/weather?q="+cityacum+"&appid=619e16aa1572618094ce0e897e987d53";
 
@@ -59,31 +55,28 @@ public class WeatherConnectionApi extends AsyncTask {
             reader.close();
 
             data = new JSONObject(json.toString());
-            convertDataWeatherModel(data);
-
-
-            QuoteDataSource.getWeatherDataHelper().insertWeatherDataHelper(weatherModel);
-
-            /*Thread.sleep(3600000);*/
+            convertDataToWeatherModel(data);
 
         } catch (JSONException | IOException e) {
             Log.d("error22", e.getMessage());
-        }/* catch (InterruptedException e) {
-            e.printStackTrace();
-        }*/
+        }
 
-        return null;
+        return weatherModel;
     }
 
-    public void convertDataWeatherModel(JSONObject json){
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+    }
+
+    public void convertDataToWeatherModel(JSONObject json){
 
         try {
-
             JSONObject details = json.getJSONArray("weather").getJSONObject(0);
             JSONObject main = json.getJSONObject("main");
             weatherModel.setHumidity(Float.parseFloat(main.getString("humidity")));
             weatherModel.setPressure(Float.parseFloat(main.getString("pressure")));
-            weatherModel.setTemp(Float.parseFloat(main.getDouble("temp")+""));
+            weatherModel.setTemp(Float.parseFloat(main.getDouble("temp") + ""));
             weatherModel.setWeathername(details.getString("description"));
             setWeatherIcon(details.getInt("id"),
                     json.getJSONObject("sys").getLong("sunrise") * 1000,

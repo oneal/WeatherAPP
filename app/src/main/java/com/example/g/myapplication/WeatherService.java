@@ -9,7 +9,12 @@ import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
+import java.util.concurrent.ExecutionException;
+
+import bbdd.QuoteDataSource;
 import conectionWeatherData.WeatherConnectionApi;
+import fragment.Weather;
+import weatherData.WeatherModel;
 
 public class WeatherService extends Service {
 
@@ -25,27 +30,20 @@ public class WeatherService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mBuilder =
-                (NotificationCompat.Builder) new NotificationCompat.Builder(this)
-                        .setSmallIcon(android.R.drawable.sym_def_app_icon)
-                        .setContentTitle("Reproducciendo")
-                        .setContentText("Hello World!");
-        Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                this,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-        );
-
-        mBuilder.setContentIntent(pendingIntent);
-        mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        weatherConnectionApi = new WeatherConnectionApi(getApplicationContext());
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        weatherConnectionApi = new WeatherConnectionApi(getApplicationContext());
-        weatherConnectionApi.execute();
+
+        try {
+            WeatherModel weatherModel = weatherConnectionApi.execute().get();
+            QuoteDataSource.getWeatherDataHelper().insertWeatherDataHelper(weatherModel);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -53,7 +51,7 @@ public class WeatherService extends Service {
     @Override
     public void onDestroy() {
         try {
-            finalize();
+            weatherConnectionApi.cancel(true);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
